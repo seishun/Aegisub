@@ -69,6 +69,7 @@
 #include <wx/clipbrd.h>
 #include <wx/fontdlg.h>
 #include <wx/textentry.h>
+#include <format>
 
 namespace {
 	using namespace boost::adaptors;
@@ -366,7 +367,7 @@ void show_color_picker(const agi::Context *c, agi::Color (AssStyle::*field), con
 		for (auto& line : lines) {
 			int shift = line.second.set_tag(tag, new_color.GetAssOverrideFormatted(), norm_sel_start, sel_start);
 			if (new_color.a != line.first.a) {
-				shift += line.second.set_tag(alpha, agi::format("&H%02X&", (int)new_color.a), norm_sel_start, sel_start + shift);
+				shift += line.second.set_tag(alpha, std::format("&H{:02X}&", (int)new_color.a), norm_sel_start, sel_start + shift);
 				line.first.a = new_color.a;
 			}
 
@@ -1162,12 +1163,12 @@ struct edit_redo final : public Command {
 	wxString StrMenu(const agi::Context *c) const override {
 		return c->subsController->IsRedoStackEmpty() ?
 			_("Nothing to &redo") :
-			fmt_tl("&Redo %s", c->subsController->GetRedoDescription());
+			fmt_tl("&Redo {}", c->subsController->GetRedoDescription().utf8_str().data());
 	}
 	wxString StrDisplay(const agi::Context *c) const override {
 		return c->subsController->IsRedoStackEmpty() ?
 			_("Nothing to redo") :
-			fmt_tl("Redo %s", c->subsController->GetRedoDescription());
+			fmt_tl("Redo {}", c->subsController->GetRedoDescription().utf8_str().data());
 	}
 
 	bool Validate(const agi::Context *c) override {
@@ -1188,12 +1189,12 @@ struct edit_undo final : public Command {
 	wxString StrMenu(const agi::Context *c) const override {
 		return c->subsController->IsUndoStackEmpty() ?
 			_("Nothing to &undo") :
-			fmt_tl("&Undo %s", c->subsController->GetUndoDescription());
+			fmt_tl("&Undo {}", c->subsController->GetUndoDescription().utf8_str().data());
 	}
 	wxString StrDisplay(const agi::Context *c) const override {
 		return c->subsController->IsUndoStackEmpty() ?
 			_("Nothing to undo") :
-			fmt_tl("Undo %s", c->subsController->GetUndoDescription());
+			fmt_tl("Undo {}", c->subsController->GetUndoDescription().utf8_str().data());
 	}
 
 	bool Validate(const agi::Context *c) override {

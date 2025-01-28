@@ -22,7 +22,6 @@ tests_src = [
     'tests/character_count.cpp',
     'tests/color.cpp',
     'tests/dialogue_lexer.cpp',
-    'tests/format.cpp',
     'tests/fs.cpp',
     'tests/hotkey.cpp',
     'tests/iconv.cpp',

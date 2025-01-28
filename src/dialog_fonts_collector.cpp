@@ -27,7 +27,6 @@
 #include "value_event.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format_path.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/path.h>
 
@@ -98,7 +97,7 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 			paths = FontCollector(AppendText).GetFontPaths(subs);
 		}
 		catch (agi::EnvironmentError const& err) {
-			AppendText(fmt_tl("* An error occurred when enumerating the used fonts: %s.\n", err.GetMessage()), 2);
+			AppendText(fmt_tl("* An error occurred when enumerating the used fonts: {}.\n", err.GetMessage()), 2);
 		}
 
 		if (paths.empty()) {
@@ -131,8 +130,8 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 				agi::fs::CreateDirectory(destination.parent_path());
 			}
 			catch (agi::fs::FileSystemError const& e) {
-				AppendText(fmt_tl("* Failed to create directory '%s': %s.\n",
-					destination.parent_path().wstring(), to_wx(e.GetMessage())), 2);
+				AppendText(fmt_tl("* Failed to create directory '{}': {}.\n",
+					destination.parent_path().string(), to_wx(e.GetMessage()).utf8_str().data()), 2);
 				collector->AddPendingEvent(wxThreadEvent(EVT_COLLECTION_DONE));
 				return;
 			}
@@ -142,7 +141,7 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 				zip = std::make_unique<wxZipOutputStream>(*out);
 
 			if (!out->IsOk() || !zip || !zip->IsOk()) {
-				AppendText(fmt_tl("* Failed to open %s.\n", destination), 2);
+				AppendText(fmt_tl("* Failed to open {}.\n", destination.string()), 2);
 				collector->AddPendingEvent(wxThreadEvent(EVT_COLLECTION_DONE));
 				return;
 			}
@@ -197,13 +196,13 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 			}
 
 			if (ret == 1)
-				AppendText(fmt_tl("* Copied %s.\n", path), 1);
+				AppendText(fmt_tl("* Copied {}.\n", path.string()), 1);
 			else if (ret == 2)
-				AppendText(fmt_tl("* %s already exists on destination.\n", path.filename()), 3);
+				AppendText(fmt_tl("* {} already exists on destination.\n", path.filename().string()), 3);
 			else if (ret == 3)
-				AppendText(fmt_tl("* Symlinked %s.\n", path), 1);
+				AppendText(fmt_tl("* Symlinked {}.\n", path.string()), 1);
 			else {
-				AppendText(fmt_tl("* Failed to copy %s.\n", path), 2);
+				AppendText(fmt_tl("* Failed to copy {}.\n", path.string()), 2);
 				allOk = false;
 			}
 		}

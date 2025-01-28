@@ -19,7 +19,6 @@
 #include "ass_dialogue.h"
 
 #include <libaegisub/ass/karaoke.h>
-#include <libaegisub/format.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>

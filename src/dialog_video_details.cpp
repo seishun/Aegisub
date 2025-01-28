@@ -57,9 +57,9 @@ void ShowVideoDetailsDialog(agi::Context *c) {
 		fg->Add(new wxTextCtrl(&d, -1, value, wxDefaultPosition, wxSize(300,-1), wxTE_READONLY), 0, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 	};
 	make_field(_("File name:"), c->project->VideoName().wstring());
-	make_field(_("FPS:"), fmt_wx("%.3f", fps.FPS()));
-	make_field(_("Resolution:"), fmt_wx("%dx%d (%d:%d)", width, height, ar.numerator(), ar.denominator()));
-	make_field(_("Length:"), fmt_plural(framecount, "1 frame", "%d frames (%s)",
+	make_field(_("FPS:"), fmt_wx("{:.3f}", fps.FPS()));
+	make_field(_("Resolution:"), fmt_wx("{}x{} ({}:{})", width, height, ar.numerator(), ar.denominator()));
+	make_field(_("Length:"), fmt_plural(framecount, "1 frame", "{} frames ({})",
 		framecount, agi::Time(fps.TimeAtFrame(framecount - 1)).GetAssFormatted(true)));
 	make_field(_("Decoder:"), to_wx(provider->GetDecoderName()));
 

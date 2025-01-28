@@ -17,7 +17,6 @@
 #include "libaegisub/audio/provider.h"
 
 #include <libaegisub/file_mapping.h>
-#include <libaegisub/format.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/path.h>
 
@@ -52,8 +51,8 @@ class HDAudioProvider final : public AudioProviderWrapper {
 		if ((uint64_t)num_samples * bytes_per_sample > fs::FreeSpace(dir))
 			throw AudioProviderError("Not enough free disk space in " + dir.string() + " to cache the audio");
 
-		return format("audio-%lld-%lld", time(nullptr),
-		              boost::interprocess::ipcdetail::get_current_process_id());
+		return std::format("audio-{}-{}", static_cast<intmax_t>(time(nullptr)),
+		                   static_cast<intmax_t>(boost::interprocess::ipcdetail::get_current_process_id()));
 	}
 
 public:

@@ -16,7 +16,6 @@
 
 #include "libaegisub/lua/utils.h"
 
-#include "libaegisub/format.h"
 #include "libaegisub/log.h"
 #include "libaegisub/string.h"
 
@@ -170,9 +169,9 @@ int add_stack_trace(lua_State *L) {
 			else if (*ar.what == 'C')
 				function = '?';
 			else if (!*ar.namewhat)
-				function = agi::format("<anonymous function at lines %d-%d>", real_line(ar.linedefined), real_line(ar.lastlinedefined - 1));
+				function = std::format("<anonymous function at lines {}-{}>", real_line(ar.linedefined), real_line(ar.lastlinedefined - 1));
 
-			frames.emplace_back(agi::format("    File \"%s\", line %d\n%s", file, real_line(ar.currentline), function));
+			frames.emplace_back(std::format("    File \"{}\", line {}\n{}", file, real_line(ar.currentline), function));
 		}
 	}
 

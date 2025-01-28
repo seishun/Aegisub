@@ -45,8 +45,6 @@
 #include "video_controller.h"
 #include "video_display.h"
 
-#include <libaegisub/format_path.h>
-
 #include <wx/sizer.h>
 #include <wx/display.h> /// Must be included last.
 
@@ -60,7 +58,7 @@ DialogDetachedVideo::DialogDetachedVideo(agi::Context *context)
 	// Set obscure stuff
 	SetExtraStyle((GetExtraStyle() & ~wxWS_EX_BLOCK_EVENTS) | wxWS_EX_PROCESS_UI_UPDATES);
 
-	SetTitle(fmt_tl("Video: %s", context->project->VideoName().filename()));
+	SetTitle(fmt_tl("Video: {}", context->project->VideoName().filename().string()));
 
 	old_display->Unload();
 
@@ -128,7 +126,7 @@ void DialogDetachedVideo::OnKeyDown(wxKeyEvent &evt) {
 
 void DialogDetachedVideo::OnVideoOpen(AsyncVideoProvider *new_provider) {
 	if (new_provider)
-		SetTitle(fmt_tl("Video: %s", context->project->VideoName().filename()));
+		SetTitle(fmt_tl("Video: {}", context->project->VideoName().filename().string()));
 	else {
 		Close();
 		OPT_SET("Video/Detached/Enabled")->SetBool(true);

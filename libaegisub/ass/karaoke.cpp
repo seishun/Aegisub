@@ -17,7 +17,7 @@
 #include <libaegisub/ass/karaoke.h>
 
 #include <libaegisub/karaoke_matcher.h>
-#include <libaegisub/format.h>
+#include <format>
 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -26,7 +26,7 @@ std::string KaraokeSyllable::GetText(bool k_tag) const {
 	std::string ret;
 
 	if (k_tag)
-		ret = agi::format("{%s%d}", tag_type, ((duration + 5) / 10));
+		ret = std::format("{{{}{}}}", tag_type, ((duration + 5) / 10));
 
 	std::string_view sv = text;
 	size_t idx = 0;

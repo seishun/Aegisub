@@ -43,7 +43,6 @@
 
 #include <libaegisub/ass/time.h>
 #include <libaegisub/file_mapping.h>
-#include <libaegisub/format.h>
 #include <libaegisub/scoped_ptr.h>
 
 #include <algorithm>
@@ -52,6 +51,7 @@
 #include <boost/range/irange.hpp>
 #include <boost/tokenizer.hpp>
 #include <iterator>
+#include <format>
 
 #include <wx/choicdlg.h> // Keep this last so wxUSE_CHOICEDLG is set.
 
@@ -168,7 +168,7 @@ static bool read_subtitles(agi::ProgressSink *ps, MatroskaFile *file, MkvStdIO *
 
 			subList.emplace_back(
 				boost::lexical_cast<int>(readBuf.substr(0, first)),
-				agi::format("Dialogue: %d,%s,%s,%s"
+				std::format("Dialogue: {},{},{},{}"
 					, boost::lexical_cast<int>(readBuf.substr(first + 1, second - (first + 1)))
 					, subStart.GetAssFormatted()
 					, subEnd.GetAssFormatted()
@@ -176,7 +176,7 @@ static bool read_subtitles(agi::ProgressSink *ps, MatroskaFile *file, MkvStdIO *
 		}
 		// Process SRT
 		else {
-			auto line = agi::format("Dialogue: 0,%s,%s,Default,,0,0,0,,%s"
+			auto line = std::format("Dialogue: 0,{},{},Default,,0,0,0,,{}"
 				, subStart.GetAssFormatted()
 				, subEnd.GetAssFormatted()
 				, readBuf);
@@ -217,7 +217,7 @@ void MatroskaWrapper::GetSubtitles(agi::fs::path const& filename, AssFile *targe
 		std::string CodecID(trackInfo->CodecID);
 		if (CodecID == "S_TEXT/SSA" || CodecID == "S_TEXT/ASS" || CodecID == "S_TEXT/UTF8") {
 			tracksFound.push_back(track);
-			tracksNames.emplace_back(agi::format("%d (%s %s)", track, CodecID, trackInfo->Language));
+			tracksNames.emplace_back(std::format("{} ({} {})", track, CodecID, trackInfo->Language));
 			if (trackInfo->Name) {
 				tracksNames.back() += ": ";
 				tracksNames.back() += trackInfo->Name;

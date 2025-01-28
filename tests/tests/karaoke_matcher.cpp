@@ -66,16 +66,6 @@ bool operator==(span<T> const& a, span<T> const& b) {
 	}
 	return true;
 }
-
-::std::ostream& operator<<(::std::ostream& os, span<const agi::ass::KaraokeSyllable> const& s) {
-	print(os, 0, s, "KaraokeSyllable");
-	return os;
-}
-
-::std::ostream& operator<<(::std::ostream& os, span<const agi::KaraokeMatcher::MatchGroup> const& s) {
-	print(os, 0, s, "MatchGroup");
-	return os;
-}
 } // namespace std
 
 namespace agi {

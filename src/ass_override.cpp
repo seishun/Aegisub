@@ -34,13 +34,13 @@
 
 #include <libaegisub/color.h>
 #include <libaegisub/exception.h>
-#include <libaegisub/format.h>
 #include <libaegisub/split.h>
 #include <libaegisub/string.h>
 
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <functional>
+#include <format>
 
 using namespace boost::adaptors;
 
@@ -102,7 +102,7 @@ template<> void AssOverrideParameter::Set<std::string>(std::string new_value) {
 
 template<> void AssOverrideParameter::Set<int>(int new_value) {
 	if (classification == AssParameterClass::ALPHA)
-		Set(agi::format("&H%02X&", mid(0, new_value, 255)));
+		Set(std::format("&H{:02X}&", mid(0, new_value, 255)));
 	else
 		Set(std::to_string(new_value));
 }

@@ -37,14 +37,14 @@
 
 #include "string_codec.h"
 
-#include <libaegisub/format.h>
+#include <format>
 
 std::string inline_string_encode(std::string_view input) {
 	std::string output;
 	output.reserve(input.size());
 	for (char c : input) {
 		if (c <= 0x1F || c == 0x23 || c == 0x2C || c == 0x3A || c == 0x7C)
-			output += agi::format("#%02X", (unsigned char)c);
+			output += std::format("#{:02X}", (unsigned char)c);
 		else
 			output += c;
 	}

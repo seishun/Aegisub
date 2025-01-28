@@ -34,7 +34,7 @@
 
 #include "ass_export_filter.h"
 
-#include <libaegisub/format.h>
+#include <format>
 
 static FilterList& filters() {
 	static FilterList instance;
@@ -53,7 +53,7 @@ void AssExportFilterChain::Register(std::unique_ptr<AssExportFilter> filter) {
 	std::string name = filter->name;
 	// Find a unique name
 	while (GetFilter(name))
-		name = agi::format("%s (%d)", filter->name, filter_copy++);
+		name = std::format("{} ({})", filter->name, filter_copy++);
 
 	filter->name = name;
 

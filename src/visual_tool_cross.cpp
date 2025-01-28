@@ -26,7 +26,7 @@
 #include "video_display.h"
 
 #include <libaegisub/color.h>
-#include <libaegisub/format.h>
+#include <format>
 
 VisualToolCross::VisualToolCross(VideoDisplay *parent, agi::Context *context)
 : VisualTool<VisualDraggableFeature>(parent, context)
@@ -47,9 +47,9 @@ void VisualToolCross::OnDoubleClick() {
 		int t1, t2;
 		if (GetLineMove(line, p1, p2, t1, t2)) {
 			if (t1 > 0 || t2 > 0)
-				SetOverride(line, "\\move", agi::format("(%s,%s,%d,%d)", Text(p1 + d), Text(p2 + d), t1, t2));
+				SetOverride(line, "\\move", std::format("({},{},{},{})", Text(p1 + d), Text(p2 + d), t1, t2));
 			else
-				SetOverride(line, "\\move", agi::format("(%s,%s)", Text(p1 + d), Text(p2 + d)));
+				SetOverride(line, "\\move", std::format("({},{})", Text(p1 + d), Text(p2 + d)));
 		}
 		else
 			SetOverride(line, "\\pos", "(" + Text(GetLinePosition(line) + d) + ")");

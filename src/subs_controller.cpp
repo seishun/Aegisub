@@ -33,12 +33,12 @@
 #include "text_selection_controller.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format_path.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/path.h>
 #include <libaegisub/util.h>
 
 #include <wx/msgdlg.h>
+#include <format>
 
 namespace {
 	void autosave_timer_changed(wxTimer *timer) {
@@ -243,7 +243,7 @@ int SubsController::TryToClose(bool allow_cancel) const {
 	int flags = wxYES_NO;
 	if (allow_cancel)
 		flags |= wxCANCEL;
-	int result = wxMessageBox(fmt_tl("Do you want to save changes to %s?", Filename()), _("Unsaved changes"), flags, context->parent);
+	int result = wxMessageBox(fmt_tl("Do you want to save changes to {}?", Filename().string()), _("Unsaved changes"), flags, context->parent);
 	if (result == wxYES) {
 		cmd::call("subtitle/save", context);
 		// If it fails saving, return cancel anyway
@@ -273,10 +273,10 @@ void SubsController::AutoSave() {
 
 		try {
 			agi::fs::CreateDirectory(directory);
-			auto path = directory /  agi::format("%s.%s.AUTOSAVE.ass", name.string(),
+			auto path = directory /  std::format("{}.{}.AUTOSAVE.ass", name.string(),
 			                                     agi::util::strftime("%Y-%m-%d-%H-%M-%S"));
 			SubtitleFormat::GetWriter(path)->WriteFile(subs.get(), path, 0);
-			msg = fmt_tl("File backup saved as \"%s\".", path);
+			msg = fmt_tl("File backup saved as \"{}\".", path.string());
 		}
 		catch (const agi::Exception& err) {
 			msg = to_wx("Exception when attempting to autosave file: " + err.GetMessage());

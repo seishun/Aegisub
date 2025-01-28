@@ -18,7 +18,6 @@
 
 #include "version.h"
 
-#include <libaegisub/format.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/util.h>
 
@@ -42,8 +41,8 @@ public:
 		if (!fp.good()) return;
 
 		fp << util::strftime("--- %y-%m-%d %H:%M:%S ------------------\n");
-		fp << agi::format("VER - %s\n", GetAegisubLongVersionString());
-		fp << agi::format("FTL - Beginning stack dump for \"%s\": \n", cause);
+		fp << std::format("VER - {}\n", GetAegisubLongVersionString());
+		fp << std::format("FTL - Beginning stack dump for \"{}\": \n", cause);
 	}
 
 	~StackWalker() {
@@ -56,9 +55,9 @@ public:
 	void OnStackFrame(wxStackFrame const& frame) override final {
 		if (!fp.good()) return;
 
-		fp << agi::format("%03u - %p: %s", frame.GetLevel(), frame.GetAddress(), frame.GetName().utf8_str().data());
+		fp << std::format("{:03} - {}: {}", frame.GetLevel(), frame.GetAddress(), frame.GetName().utf8_str().data());
 		if (frame.HasSourceLocation())
-			fp << agi::format(" on %s:%u", frame.GetFileName().utf8_str().data(), frame.GetLine());
+			fp << std::format(" on {}:{}", frame.GetFileName().utf8_str().data(), frame.GetLine());
 
 		fp << "\n";
 	}
@@ -84,8 +83,8 @@ void Write(std::string const& error) {
 	std::ofstream file(crashlog_path, std::ios::app);
 	if (file.is_open()) {
 		file << util::strftime("--- %y-%m-%d %H:%M:%S ------------------\n");
-		file << agi::format("VER - %s\n", GetAegisubLongVersionString());
-		file << agi::format("EXC - Aegisub has crashed with unhandled exception \"%s\".\n", error);
+		file << std::format("VER - {}\n", GetAegisubLongVersionString());
+		file << std::format("EXC - Aegisub has crashed with unhandled exception \"{}\".\n", error);
 		file << "----------------------------------------\n\n";
 		file.close();
 	}

@@ -92,7 +92,7 @@ static wxString get_history_string(json::Object &obj) {
 
 	auto shift_amount = to_wx(obj["amount"]);
 	if (!obj["is by time"])
-		shift_amount = fmt_tl("%s frames", shift_amount);
+		shift_amount = fmt_tl("{} frames", shift_amount.utf8_str().data());
 
 	wxString shift_direction = obj["is backward"] ? _("backward") : _("forward");
 
@@ -110,7 +110,7 @@ static wxString get_history_string(json::Object &obj) {
 		lines = _("all");
 	else if (sel_mode == 2) {
 		if (!sel.empty())
-			lines = fmt_tl("from %d onward", (int64_t)static_cast<json::Object&>(sel.front())["start"]);
+			lines = fmt_tl("from {} onward", (int64_t)static_cast<json::Object&>(sel.front())["start"]);
 	}
 	else {
 		lines += _("sel ");
@@ -121,13 +121,13 @@ static wxString get_history_string(json::Object &obj) {
 			if (beg == end)
 				lines += std::to_wstring(beg);
 			else
-				lines += fmt_wx("%d-%d", beg, end);
+				lines += fmt_wx("{}-{}", beg, end);
 			if (it + 1 != sel.end())
 				lines += ";";
 		}
 	}
 
-	return fmt_wx("%s, %s %s, %s, %s", filename, shift_amount, shift_direction, fields, lines);
+	return fmt_wx("{}, {} {}, {}, {}", filename.utf8_str().data(), shift_amount.utf8_str().data(), shift_direction.utf8_str().data(), fields.utf8_str().data(), lines.utf8_str().data());
 }
 
 DialogShiftTimes::DialogShiftTimes(agi::Context *context)

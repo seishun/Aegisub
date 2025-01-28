@@ -49,6 +49,8 @@
 #include <wx/app.h>
 #endif
 
+#include <format>
+
 namespace {
 
 class MruMenu final : public wxMenu {
@@ -67,7 +69,7 @@ class MruMenu final : public wxMenu {
 		for (size_t i = GetMenuItemCount(); i < new_size; ++i) {
 			if (i >= items.size()) {
 				items.push_back(new wxMenuItem(this, id_base + cmds->size(), "_"));
-				cmds->push_back(agi::format("recent/%s/%d", boost::to_lower_copy(type), i));
+				cmds->push_back(std::format("recent/{}/{}", boost::to_lower_copy(type), i));
 			}
 			Append(items[i]);
 		}
@@ -102,9 +104,9 @@ public:
 			wxString name = it->wstring();
 			if (!name.StartsWith("?"))
 				name = it->filename().wstring();
-			items[i]->SetItemLabel(fmt_wx("%s%d %s",
+			items[i]->SetItemLabel(fmt_wx("{}{} {}",
 				i <= 9 ? "&" : "", i + 1,
-				name));
+				name.utf8_str().data()));
 			items[i]->Enable(true);
 		}
 	}

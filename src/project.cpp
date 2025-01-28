@@ -38,7 +38,6 @@
 #include "video_display.h"
 
 #include <libaegisub/audio/provider.h>
-#include <libaegisub/format_path.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/keyframe.h>
 #include <libaegisub/log.h>
@@ -190,17 +189,17 @@ void Project::LoadUnloadFiles(ProjectProperties properties) {
 			if (p.empty())
 				str += "\n" + unload;
 			else
-				str += "\n" + agi::wxformat(load, p);
+				str += "\n" + agi::format(load, p.string());
 		};
 
 		if (audio != audio_file)
-			append_file(audio, _("Unload audio"), _("Load audio file: %s"));
+			append_file(audio, _("Unload audio"), _("Load audio file: {}"));
 		if (video != video_file)
-			append_file(video, _("Unload video"), _("Load video file: %s"));
+			append_file(video, _("Unload video"), _("Load video file: {}"));
 		if (timecodes != timecodes_file)
-			append_file(timecodes, _("Unload timecodes"), _("Load timecodes file: %s"));
+			append_file(timecodes, _("Unload timecodes"), _("Load timecodes file: {}"));
 		if (keyframes != keyframes_file)
-			append_file(keyframes, _("Unload keyframes"), _("Load keyframes file: %s"));
+			append_file(keyframes, _("Unload keyframes"), _("Load keyframes file: {}"));
 
 		if (wxMessageBox(str, _("(Un)Load files?"), wxYES_NO | wxCENTRE, context->parent) != wxYES)
 			return;

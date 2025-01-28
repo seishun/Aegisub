@@ -62,7 +62,7 @@ void Check(fs::path const& file, acs::Type type) {
 			case ERROR_ACCESS_DENIED:
 				throw fs::ReadDenied(file);
 			default:
-				throw fs::FileSystemUnknownError(agi::format("Unexpected error when getting attributes for \"%s\": %s", file, util::ErrorString(GetLastError())));
+				throw fs::FileSystemUnknownError(std::format("Unexpected error when getting attributes for \"{}\": {}", file, util::ErrorString(GetLastError())));
 		}
 	}
 

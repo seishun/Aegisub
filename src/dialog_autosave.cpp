@@ -90,9 +90,9 @@ DialogAutosave::DialogAutosave(wxWindow *parent)
 	d.SetSizer(main_sizer);
 
 	std::map<wxString, AutosaveFile> files_map;
-	Populate(files_map, OPT_GET("Path/Auto/Save")->GetString(), ".AUTOSAVE.ass", "%s");
-	Populate(files_map, OPT_GET("Path/Auto/Backup")->GetString(), ".ORIGINAL.ass", _("%s [ORIGINAL BACKUP]"));
-	Populate(files_map, "?user/recovered", ".ass", _("%s [RECOVERED]"));
+	Populate(files_map, OPT_GET("Path/Auto/Save")->GetString(), ".AUTOSAVE.ass", "{}");
+	Populate(files_map, OPT_GET("Path/Auto/Backup")->GetString(), ".ORIGINAL.ass", _("{} [ORIGINAL BACKUP]"));
+	Populate(files_map, "?user/recovered", ".ass", _("{} [RECOVERED]"));
 
 	for (auto& file : files_map | boost::adaptors::map_values)
 		files.emplace_back(std::move(file));
@@ -144,7 +144,7 @@ void DialogAutosave::Populate(std::map<wxString, AutosaveFile> &files_map, std::
 		auto it = files_map.find(name);
 		if (it == files_map.end())
 			it = files_map.insert({name, AutosaveFile{name}}).first;
-		it->second.versions.push_back(Version{wxFileName(directory, fn).GetFullPath(), date, agi::wxformat(name_fmt, date.Format())});
+		it->second.versions.push_back(Version{wxFileName(directory, fn).GetFullPath(), date, agi::wxformat(name_fmt, date.Format().wx_str())});
 	} while (dir.GetNext(&fn));
 }
 

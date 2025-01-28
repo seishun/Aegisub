@@ -39,6 +39,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <wx/utils.h>
+#include <format>
 
 namespace
 {
@@ -393,7 +394,7 @@ namespace
 			else if (!imline.CheckLineLengths(export_settings.max_line_length))
 			{
 				if (export_settings.line_wrapping_mode == EbuExportSettings::AbortOverLength)
-					throw Ebu3264SubtitleFormat::ConversionFailed(agi::format(_("Line over maximum length: %s"), line.Text));
+					throw Ebu3264SubtitleFormat::ConversionFailed(agi::format(_("Line over maximum length: {}"), line.Text.get()));
 				else // skip over-long lines
 					subs_list.pop_back();
 			}

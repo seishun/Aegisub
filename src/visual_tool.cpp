@@ -30,7 +30,6 @@
 #include "visual_tool_vector_clip.h"
 
 #include <libaegisub/ass/time.h>
-#include <libaegisub/format.h>
 #include <libaegisub/of_type_adaptor.h>
 #include <libaegisub/string.h>
 
@@ -501,7 +500,7 @@ std::string VisualToolBase::GetLineVectorClip(AssDialogue *diag, int &scale, boo
 		tag = find_tag(blocks, "\\clip");
 
 	if (tag && tag->size() == 4) {
-		return agi::format("m %.2f %.2f l %.2f %.2f %.2f %.2f %.2f %.2f"
+		return std::format("m {:.2f} {:.2f} l {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f}"
 			, (*tag)[0].Get<double>(), (*tag)[1].Get<double>()
 			, (*tag)[2].Get<double>(), (*tag)[1].Get<double>()
 			, (*tag)[2].Get<double>(), (*tag)[3].Get<double>()

@@ -39,7 +39,7 @@
 #include "text_file_writer.h"
 
 #include <libaegisub/ass/smpte.h>
-#include <libaegisub/format.h>
+#include <format>
 
 EncoreSubtitleFormat::EncoreSubtitleFormat()
 : SubtitleFormat("Adobe Encore")
@@ -71,5 +71,5 @@ void EncoreSubtitleFormat::WriteFile(const AssFile *src, agi::fs::path const& fi
 	int i = 0;
 	TextFileWriter file(filename, "UTF-8");
 	for (auto const& current : copy.Events)
-		file.WriteLineToFile(agi::format("%i %s %s %s", ++i, ft.ToSMPTE(current.Start), ft.ToSMPTE(current.End), current.Text));
+		file.WriteLineToFile(std::format("{} {} {} {}", ++i, ft.ToSMPTE(current.Start), ft.ToSMPTE(current.End), current.Text.get()));
 }

@@ -25,8 +25,6 @@
 #include "options.h"
 #include "selection_controller.h"
 
-#include <libaegisub/format.h>
-
 #include <cmath>
 #include <wx/colour.h>
 
@@ -172,8 +170,8 @@ void VisualToolRotateXY::UpdateHold() {
 	angle_x = fmodf(angle_x + 360.f, 360.f);
 	angle_y = fmodf(angle_y + 360.f, 360.f);
 
-	SetSelectedOverride("\\frx", agi::format("%.4g", angle_x));
-	SetSelectedOverride("\\fry", agi::format("%.4g", angle_y));
+	SetSelectedOverride("\\frx", std::format("{:.4}", angle_x));
+	SetSelectedOverride("\\fry", std::format("{:.4}", angle_y));
 }
 
 void VisualToolRotateXY::UpdateDrag(Feature *feature) {

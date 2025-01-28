@@ -54,7 +54,7 @@ namespace {
 		bool TransferToWindow() override {
 			wxTextCtrl *ctrl = GetCtrl();
 			if (!ctrl) return false;
-			ctrl->SetValue(fmt_wx("%02d:%02d:%02d:%02d", value->h, value->m, value->s, value->f));
+			ctrl->SetValue(fmt_wx("{:02}:{:02}:{:02}:{:02}", value->h, value->m, value->s, value->f));
 			return true;
 		}
 

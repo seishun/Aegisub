@@ -39,7 +39,6 @@
 #include "subs_controller.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/path.h>
 #include <libaegisub/split.h>
@@ -484,7 +483,7 @@ namespace Automation4 {
 
 			std::string filter(fact->GetFilenamePattern());
 			boost::replace_all(filter, ",", ";");
-			fnfilter += agi::format("%s scripts (%s)|%s|", fact->GetEngineName(), fact->GetFilenamePattern(), filter);
+			fnfilter += std::format("{} scripts ({})|{}|", fact->GetEngineName(), fact->GetFilenamePattern(), filter);
 			catchall += filter + ";";
 		}
 		fnfilter += from_wx(_("All Files")) + " (*.*)|*.*";

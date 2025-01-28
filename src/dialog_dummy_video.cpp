@@ -176,7 +176,7 @@ bool DialogDummyVideo::UpdateLengthDisplay() {
 		dur = agi::Time(fr.value().TimeAtFrame(length)).GetAssFormatted(true);
 		valid = true;
 	}
-	length_display->SetLabel(fmt_tl("Resulting duration: %s", dur));
+	length_display->SetLabel(fmt_tl("Resulting duration: {}", dur));
 	return valid;
 }
 }

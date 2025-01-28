@@ -58,7 +58,7 @@ public:
 #ifndef _WIN32
 		tm tmtime;
 		localtime_r(&time, &tmtime);
-		auto log = fmt_wx("%c %02d:%02d:%02d %-6d <%-25s> [%s:%s:%d]  %s\n",
+		auto log = fmt_wx("{} {:02}:{:02}:{:02} {:<6} <{:25}> [{}:{}:{}]  {}\n",
 			agi::log::Severity_ID[sm.severity],
 			tmtime.tm_hour,
 			tmtime.tm_min,
@@ -70,7 +70,7 @@ public:
 			sm.line,
 			sm.message);
 #else
-		auto log = fmt_wx("%c %-6ld.%09ld <%-25s> [%s:%s:%d]  %s\n",
+		auto log = fmt_wx("{} {:<6}.{:09} <{:25}> [{}:{}:{}]  {}\n",
 			agi::log::Severity_ID[sm.severity],
 			(sm.time / 1000000000),
 			(sm.time % 1000000000),

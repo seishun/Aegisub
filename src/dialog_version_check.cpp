@@ -64,6 +64,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#include <format>
+
 namespace {
 std::mutex VersionCheckLock;
 
@@ -295,17 +297,17 @@ void DoCheck(bool interactive) {
 		throw VersionCheckError(from_wx(_("Curl could not be initialized.")));
 
 	curl_easy_setopt(curl, CURLOPT_URL,
-		agi::format("%s%s?rev=%d&rel=%d&os=%s&lang=%s&aegilang=%s"
+		std::format("{}{}?rev={}&rel={}&os={}&lang={}&aegilang={}"
 			, UPDATE_CHECKER_SERVER
 			, UPDATE_CHECKER_BASE_URL
 			, GetSVNRevision()
 			, (GetIsOfficialRelease() ? 1 : 0)
 			, GetOSShortName()
-			, GetSystemLanguage()
-			, GetAegisubLanguage()
+			, GetSystemLanguage().utf8_str().data()
+			, GetAegisubLanguage().utf8_str().data()
 		).c_str());
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-	curl_easy_setopt(curl, CURLOPT_USERAGENT, agi::format("Aegisub %s", GetAegisubLongVersionString()).c_str());
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, std::format("Aegisub {}", GetAegisubLongVersionString()).c_str());
 
 	std::string result;
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeToStringCb);
@@ -314,7 +316,7 @@ void DoCheck(bool interactive) {
 	res_code = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	if (res_code != CURLE_OK) {
-		std::string err_msg = agi::format(_("Checking for updates failed: %s."), curl_easy_strerror(res_code));
+		std::string err_msg = agi::format(_("Checking for updates failed: {}."), curl_easy_strerror(res_code));
 		throw VersionCheckError(err_msg);
 	}
 
@@ -374,7 +376,7 @@ void PerformVersionCheck(bool interactive) {
 		}
 		catch (const agi::Exception &e) {
 			PostErrorEvent(interactive, fmt_tl(
-				"There was an error checking for updates to Aegisub:\n%s\n\nIf other applications can access the Internet fine, this is probably a temporary server problem on our end.",
+				"There was an error checking for updates to Aegisub:\n{}\n\nIf other applications can access the Internet fine, this is probably a temporary server problem on our end.",
 				e.GetMessage()));
 		}
 		catch (...) {

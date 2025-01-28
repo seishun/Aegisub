@@ -36,7 +36,6 @@
 
 #include <libaegisub/ass/smpte.h>
 #include <libaegisub/ass/time.h>
-#include <libaegisub/format.h>
 
 TranStationSubtitleFormat::TranStationSubtitleFormat()
 : SubtitleFormat("TranStation")
@@ -105,6 +104,6 @@ std::string TranStationSubtitleFormat::ConvertLine(AssFile *file, const AssDialo
 	if (nextl_start > 0 && end == nextl_start)
 		end = fps.TimeAtFrame(fps.FrameAtTime(end, agi::vfr::END) - 1, agi::vfr::END);
 
-	std::string header = agi::format("SUB[%i%s%s %s>%s]\r\n", valign, halign, type, ft.ToSMPTE(current->Start), ft.ToSMPTE(end));
+	std::string header = std::format("SUB[{}{}{} {}>{}]\r\n", valign, halign, type, ft.ToSMPTE(current->Start), ft.ToSMPTE(end));
 	return header + current->Text.get();
 }

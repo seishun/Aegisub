@@ -448,21 +448,21 @@ public:
 
 				if (changed_hour)
 				{
-					time_string = fmt_wx("%d:%02d:", mark_hour, mark_minute);
+					time_string = fmt_wx("{}:{:02}:", mark_hour, mark_minute);
 					last_hour = mark_hour;
 					last_minute = mark_minute;
 				}
 				else if (changed_minute)
 				{
-					time_string = fmt_wx("%d:", mark_minute);
+					time_string = fmt_wx("{}", mark_minute);
 					last_minute = mark_minute;
 				}
 				if (scale_minor >= Sc_Decisecond)
-					time_string += fmt_wx("%02d", mark_second);
+					time_string += fmt_wx("{:02}", static_cast<intmax_t>(mark_second));
 				else if (scale_minor == Sc_Centisecond)
-					time_string += fmt_wx("%02.1f", mark_second);
+					time_string += fmt_wx("{:02.1f}", mark_second);
 				else
-					time_string += fmt_wx("%02.2f", mark_second);
+					time_string += fmt_wx("{:02.2f}", mark_second);
 
 				int tw, th;
 				dc.GetTextExtent(time_string, &tw, &th);
@@ -703,7 +703,7 @@ wxString AudioDisplay::GetZoomLevelDescription(int level) const
 	const int base_pixels_per_second = 50; /// @todo Make this customisable along with the above
 	const int second_pixels = 100 * base_pixels_per_second / factor;
 
-	return fmt_tl("%d%%, %d pixel/second", factor, second_pixels);
+	return fmt_tl("{}%, {} pixel/second", factor, second_pixels);
 }
 
 int AudioDisplay::GetZoomLevelFactor(int level)

@@ -32,7 +32,7 @@ static CommandMap cmd_map;
 static iterator find_command(std::string_view name) {
 	if (auto it = cmd_map.find(name); it != cmd_map.end())
 		return it;
-	throw CommandNotFound(agi::format(_("'%s' is not a valid command name"), name));
+	throw CommandNotFound(agi::format(_("'{}' is not a valid command name"), name));
 }
 
 wxString Command::GetTooltip(std::string ht_context) const {

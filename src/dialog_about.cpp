@@ -127,7 +127,7 @@ void ShowAboutDialog(wxWindow *parent) {
 #endif
 		+ _("\nSee the help file for full credits.\n")
 #ifdef BUILD_CREDIT
-		+ fmt_tl("Built by %s on %s.", GetAegisubBuildCredit(), GetAegisubBuildTime())
+		+ fmt_tl("Built by {} on {}.", GetAegisubBuildCredit(), GetAegisubBuildTime())
 #endif
 		;
 

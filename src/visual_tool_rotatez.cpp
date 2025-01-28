@@ -25,7 +25,7 @@
 #include "options.h"
 #include "selection_controller.h"
 
-#include <libaegisub/format.h>
+#include <format>
 
 #include <cmath>
 #include <wx/colour.h>
@@ -119,7 +119,7 @@ void VisualToolRotateZ::UpdateHold() {
 
 	angle = fmodf(angle + 360.f, 360.f);
 
-	SetSelectedOverride("\\frz", agi::format("%.4g", angle));
+	SetSelectedOverride("\\frz", std::format("{:.4}", angle));
 }
 
 void VisualToolRotateZ::UpdateDrag(Feature *feature) {

@@ -42,7 +42,7 @@
 #include <libaegisub/split.h>
 #include <libaegisub/util.h>
 
-#include <libaegisub/format.h>
+#include <format>
 #include <boost/gil.hpp>
 
 DummyVideoProvider::DummyVideoProvider(agi::vfr::Framerate fps, int frames, int width, int height, agi::Color colour, bool pattern)
@@ -114,7 +114,7 @@ std::optional<agi::vfr::Framerate> DummyVideoProvider::TryParseFramerate(std::st
 }
 
 std::string DummyVideoProvider::MakeFilename(std::string fps, int frames, int width, int height, agi::Color colour, bool pattern) {
-	return agi::format("?dummy:%s:%d:%d:%d:%d:%d:%d:%s", fps, frames, width, height, (int)colour.r, (int)colour.g, (int)colour.b, (pattern ? "c" : ""));
+	return std::format("?dummy:{}:{}:{}:{}:{}:{}:{}:{}", fps, frames, width, height, (int)colour.r, (int)colour.g, (int)colour.b, (pattern ? "c" : ""));
 }
 
 void DummyVideoProvider::GetFrame(int, VideoFrame &frame) {

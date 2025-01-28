@@ -274,7 +274,7 @@ void DialogAutomation::OnInfo(wxCommandEvent &)
 	std::back_insert_iterator<wxArrayString> append_info(info);
 
 	info.push_back(fmt_tl(
-		"Total scripts loaded: %d\nGlobal scripts loaded: %d\nLocal scripts loaded: %d\n",
+		"Total scripts loaded: {}\nGlobal scripts loaded: {}\nLocal scripts loaded: {}\n",
 		local_manager->GetScripts().size() + global_manager->GetScripts().size(),
 		global_manager->GetScripts().size(),
 		local_manager->GetScripts().size()));
@@ -282,23 +282,23 @@ void DialogAutomation::OnInfo(wxCommandEvent &)
 	info.push_back(_("Scripting engines installed:"));
 	boost::transform(Automation4::ScriptFactory::GetFactories(), append_info,
 		[](std::unique_ptr<Automation4::ScriptFactory> const& f) {
-			return fmt_wx("- %s (%s)", f->GetEngineName(), f->GetFilenamePattern());
+			return fmt_wx("- {} ({})", f->GetEngineName(), f->GetFilenamePattern());
 		});
 
 	if (ei) {
-		info.push_back(fmt_tl("\nScript info:\nName: %s\nDescription: %s\nAuthor: %s\nVersion: %s\nFull path: %s\nState: %s\n\nFeatures provided by script:",
+		info.push_back(fmt_tl("\nScript info:\nName: {}\nDescription: {}\nAuthor: {}\nVersion: {}\nFull path: {}\nState: {}\n\nFeatures provided by script:",
 			ei->script->GetName(),
 			ei->script->GetDescription(),
 			ei->script->GetAuthor(),
 			ei->script->GetVersion(),
-			ei->script->GetFilename().wstring(),
-			ei->script->GetLoadedState() ? _("Correctly loaded") : _("Failed to load")));
+			ei->script->GetFilename().string(),
+			ei->script->GetLoadedState() ? _("Correctly loaded").utf8_str().data() : _("Failed to load").utf8_str().data()));
 
 		boost::transform(ei->script->GetMacros(), append_info, [this](const cmd::Command *f) {
-			return fmt_tl("    Macro: %s (%s)", f->StrDisplay(context), f->name());
+			return fmt_tl("    Macro: {} ({})", f->StrDisplay(context).utf8_str().data(), f->name());
 		});
 		boost::transform(ei->script->GetFilters(), append_info, [](const Automation4::ExportFilter* f) {
-			return fmt_tl("    Export filter: %s", f->GetName());
+			return fmt_tl("    Export filter: {}", f->GetName());
 		});
 	}
 

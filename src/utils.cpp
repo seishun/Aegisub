@@ -77,8 +77,7 @@ wxString PrettySize(int bytes) {
 }
 
 std::string float_to_string(double val, int precision) {
-	std::string fmt = "%." + std::to_string(precision) + "f";
-	std::string s = agi::format(fmt, val);
+	std::string s = std::format("{:.{}f}", val, precision);
 	size_t pos = s.find_last_not_of("0");
 	if (pos != s.find(".")) ++pos;
 	s.erase(begin(s) + pos, end(s));
@@ -176,7 +175,7 @@ void CleanCache(agi::fs::path const& directory, std::string const& file_type, ui
 		}
 
 		if (cachefiles.size() <= max_files && total_size <= max_size) {
-			LOG_D("utils/clean_cache") << agi::format("cache does not need cleaning (maxsize=%d, cursize=%d, maxfiles=%d, numfiles=%d), exiting"
+			LOG_D("utils/clean_cache") << std::format("cache does not need cleaning (maxsize={}, cursize={}, maxfiles={}, numfiles={}), exiting"
 				, max_size, total_size, max_files, cachefiles.size());
 			return;
 		}

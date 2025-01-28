@@ -41,7 +41,6 @@
 #include "text_file_reader.h"
 #include "text_file_writer.h"
 
-#include <libaegisub/format.h>
 #include <libaegisub/of_type_adaptor.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -49,6 +48,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/regex.hpp>
+#include <format>
 
 DEFINE_EXCEPTION(SRTParseError, SubtitleFormatParseError);
 
@@ -204,11 +204,11 @@ public:
 
 						// handle the attributes
 						if (attr_name == "face")
-							new_attribs.face = agi::format("{\\fn%s}", attr_value);
+							new_attribs.face = std::format("{{\\fn{}}}", attr_value);
 						else if (attr_name == "size")
-							new_attribs.size = agi::format("{\\fs%s}", attr_value);
+							new_attribs.size = std::format("{{\\fs{}}}", attr_value);
 						else if (attr_name == "color")
-							new_attribs.color = agi::format("{\\c%s}", agi::Color(attr_value).GetAssOverrideFormatted());
+							new_attribs.color = std::format("{{\\c{}}}", agi::Color(attr_value).GetAssOverrideFormatted());
 
 						// remove this attribute to prepare for the next
 						tag_attrs = result.suffix().str();
@@ -344,11 +344,11 @@ void SRTSubtitleFormat::ReadFile(AssFile *target, agi::fs::path const& filename,
 					break;
 				}
 
-				throw SRTParseError(agi::format("Parsing SRT: Expected subtitle index at line %d", line_num));
+				throw SRTParseError(std::format("Parsing SRT: Expected subtitle index at line {}", line_num));
 
 			case ParseState::TIMESTAMP:
 				if (!regex_search(text_line, timestamp_match, timestamp_regex))
-					throw SRTParseError(agi::format("Parsing SRT: Expected timestamp pair at line %d", line_num));
+					throw SRTParseError(std::format("Parsing SRT: Expected timestamp pair at line {}", line_num));
 
 				found_timestamps = true;
 				break;
@@ -496,9 +496,9 @@ std::string SRTSubtitleFormat::ConvertTags(const AssDialogue *diag) const {
 
 					bool temp = tag.Params[0].Get(false);
 					if (temp && !state.value)
-						final += agi::format("<%c>", state.tag);
+						final += std::format("<{}>", state.tag);
 					if (!temp && state.value)
-						final += agi::format("</%c>", state.tag);
+						final += std::format("</{}>", state.tag);
 					state.value = temp;
 				}
 			}
@@ -516,7 +516,7 @@ std::string SRTSubtitleFormat::ConvertTags(const AssDialogue *diag) const {
 	// Otherwise unclosed overrides might affect lines they shouldn't, see bug #809 for example
 	for (auto state : tag_states) {
 		if (state.value)
-			final += agi::format("</%c>", state.tag);
+			final += std::format("</{}>", state.tag);
 	}
 
 	return final;

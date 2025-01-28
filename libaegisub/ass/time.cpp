@@ -17,7 +17,6 @@
 #include <libaegisub/ass/time.h>
 #include <libaegisub/ass/smpte.h>
 
-#include <libaegisub/format.h>
 #include <libaegisub/split.h>
 #include <libaegisub/util.h>
 
@@ -99,7 +98,7 @@ SmpteFormatter::SmpteFormatter(vfr::Framerate fps, char sep)
 std::string SmpteFormatter::ToSMPTE(Time time) const {
 	int h=0, m=0, s=0, f=0;
 	fps.SmpteAtTime(time, &h, &m, &s, &f);
-	return format("%02d%c%02d%c%02d%c%02d", h, sep, m, sep, s, sep, f);
+	return std::format("{:02}{}{:02}{}{:02}{}{:02}", h, sep, m, sep, s, sep, f);
 }
 
 Time SmpteFormatter::FromSMPTE(std::string const& str) const {

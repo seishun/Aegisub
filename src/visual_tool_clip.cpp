@@ -26,8 +26,6 @@
 #include "options.h"
 #include "selection_controller.h"
 
-#include <libaegisub/format.h>
-
 #include <wx/colour.h>
 
 VisualToolClip::VisualToolClip(VideoDisplay *parent, agi::Context *context)
@@ -109,7 +107,7 @@ void VisualToolClip::UpdateHold() {
 }
 
 void VisualToolClip::CommitHold() {
-	std::string value = agi::format("(%s,%s)", ToScriptCoords(cur_1.Min(cur_2)).Str(), ToScriptCoords(cur_1.Max(cur_2)).Str());
+	std::string value = std::format("({},{})", ToScriptCoords(cur_1.Min(cur_2)).Str(), ToScriptCoords(cur_1.Max(cur_2)).Str());
 
 	for (auto line : c->selectionController->GetSelectedSet()) {
 		// This check is technically not correct as it could be outside of an

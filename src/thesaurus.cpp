@@ -24,7 +24,6 @@
 #include "options.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/log.h>
 #include <libaegisub/path.h>
@@ -75,8 +74,8 @@ std::vector<std::string> Thesaurus::GetLanguageList() const {
 }
 
 static bool check_path(agi::fs::path const& path, std::string const& language, agi::fs::path& idx, agi::fs::path& dat) {
-	idx = path/agi::format("th_%s.idx", language);
-	dat = path/agi::format("th_%s.dat", language);
+	idx = path/std::format("th_{}.idx", language);
+	dat = path/std::format("th_{}.dat", language);
 	return agi::fs::FileExists(idx) && agi::fs::FileExists(dat);
 }
 

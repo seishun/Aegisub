@@ -27,6 +27,7 @@
 #include <fstream>
 #include <mutex>
 #include <thread>
+#include <format>
 
 #include <Windows.h>
 #include <DbgHelp.h>
@@ -142,8 +143,8 @@ void Write(std::string const& error) {
 	std::ofstream file(crashlog_path, std::ios::app);
 	if (file.is_open()) {
 		file << agi::util::strftime("--- %y-%m-%d %H:%M:%S ------------------\n");
-		agi::format(file, "VER - %s\n", GetAegisubLongVersionString());
-		agi::format(file, "EXC - Aegisub has crashed with unhandled exception \"%s\".\n", error);
+		std::print(file, "VER - {}\n", GetAegisubLongVersionString());
+		std::print(file, "EXC - Aegisub has crashed with unhandled exception \"{}\".\n", error);
 		file << "----------------------------------------\n\n";
 	}
 }

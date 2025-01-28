@@ -59,6 +59,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
+#include <format>
 
 namespace {
 	using cmd::Command;
@@ -230,7 +231,7 @@ struct video_cycle_subtitles_provider final : public cmd::Command {
 		if (it == end(providers)) it = begin(providers);
 
 		OPT_SET("Subtitle/Provider")->SetString(*it);
-		c->frame->StatusTimeout(fmt_tl("Subtitles provider set to %s", *it), 5000);
+		c->frame->StatusTimeout(fmt_tl("Subtitles provider set to {}", *it), 5000);
 	}
 };
 
@@ -501,7 +502,7 @@ static void save_snapshot(agi::Context *c, bool raw, bool subsonly = false) {
 	int session_shot_count = 1;
 	std::string path;
 	do {
-		path = agi::format("%s_%03d_%d.png", basepath.string(), session_shot_count++, c->videoController->GetFrameN());
+		path = std::format("{}_{:03}_{}.png", basepath.string(), session_shot_count++, c->videoController->GetFrameN());
 	} while (agi::fs::FileExists(path));
 
 	get_image(c, raw, subsonly).SaveFile(to_wx(path), wxBITMAP_TYPE_PNG);

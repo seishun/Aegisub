@@ -19,7 +19,6 @@ libaegisub_src = [
     'common/charset.cpp',
     'common/color.cpp',
     'common/file_mapping.cpp',
-    'common/format.cpp',
     'common/fs.cpp',
     'common/hotkey.cpp',
     'common/io.cpp',

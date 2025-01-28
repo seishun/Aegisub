@@ -16,8 +16,6 @@
 
 #include "parser.h"
 
-#include "libaegisub/format.h"
-
 namespace agi {
 
 Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -29,11 +27,11 @@ Color::Color(std::string_view str) {
 }
 
 std::string Color::GetAssStyleFormatted() const {
-	return agi::format("&H%02X%02X%02X%02X", a, b, g, r);
+	return std::format("&H{:02X}{:02X}{:02X}{:02X}", a, b, g, r);
 }
 
 std::string Color::GetAssOverrideFormatted() const {
-	return agi::format("&H%02X%02X%02X&", b, g, r);
+	return std::format("&H{:02X}{:02X}{:02X}&", b, g, r);
 }
 
 std::string Color::GetSsaFormatted() const {
@@ -42,12 +40,12 @@ std::string Color::GetSsaFormatted() const {
 
 std::string Color::GetHexFormatted(bool rgba) const {
 	if (rgba)
-		return agi::format("#%02X%02X%02X%02X", r, g, b, a);
-	return agi::format("#%02X%02X%02X", r, g, b);
+		return std::format("#{:02X}{:02X}{:02X}{:02X}", r, g, b, a);
+	return std::format("#{:02X}{:02X}{:02X}", r, g, b);
 }
 
 std::string Color::GetRgbFormatted() const {
-	return agi::format("rgb(%d, %d, %d)", r, g, b);
+	return std::format("rgb({}, {}, {})", r, g, b);
 }
 
 }

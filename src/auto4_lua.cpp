@@ -54,7 +54,6 @@
 #include "utils.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format.h>
 #include <libaegisub/lua/ffi.h>
 #include <libaegisub/lua/modules.h>
 #include <libaegisub/lua/script_reader.h>
@@ -71,6 +70,7 @@
 #include <wx/clipbrd.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <format>
 
 using namespace agi::lua;
 using namespace Automation4;
@@ -506,7 +506,7 @@ namespace {
 		// this is where features are registered
 		if (lua_pcall(L, 0, 0, -2)) {
 			// error occurred, assumed to be on top of Lua stack
-			description = agi::format("Error initialising Lua script \"%s\":\n\n%s", GetPrettyFilename().string(), get_string_or_default(L, -1));
+			description = std::format("Error initialising Lua script \"{}\":\n\n{}", GetPrettyFilename().string(), get_string_or_default(L, -1));
 			lua_pop(L, 2); // error + error handler
 			return;
 		}
@@ -700,7 +700,7 @@ namespace {
 	, cmd_type(cmd::COMMAND_NORMAL)
 	{
 		lua_getfield(L, LUA_REGISTRYINDEX, "filename");
-		cmd_name = agi::format("automation/lua/%s/%s", check_string(L, -1), check_string(L, 1));
+		cmd_name = std::format("automation/lua/{}/{}", check_string(L, -1), check_string(L, 1));
 
 		if (!lua_isfunction(L, 3))
 			error(L, "The macro processing function must be a function");

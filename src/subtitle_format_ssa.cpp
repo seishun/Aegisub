@@ -24,7 +24,7 @@
 #include "text_file_writer.h"
 #include "version.h"
 
-#include <libaegisub/format.h>
+#include <format>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -55,7 +55,7 @@ void SsaSubtitleFormat::WriteFile(const AssFile *src, agi::fs::path const& filen
 	file.WriteLineToFile("[V4 Styles]");
 	file.WriteLineToFile("Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, TertiaryColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, AlphaLevel, Encoding");
 	for (auto const& line : src->Styles)
-		file.WriteLineToFile(agi::format("Style: %s,%s,%g,%s,%s,0,%s,%d,%d,%d,%g,%g,%d,%d,%d,%d,0,%i"
+		file.WriteLineToFile(std::format("Style: {},{},{},{},{},0,{},{},{},{},{},{},{},{},{},{},0,{}"
 			, line.name, line.font, line.fontsize
 			, line.primary.GetSsaFormatted()
 			, line.secondary.GetSsaFormatted()
@@ -82,7 +82,7 @@ void SsaSubtitleFormat::WriteFile(const AssFile *src, agi::fs::path const& filen
 	file.WriteLineToFile("[Events]");
 	file.WriteLineToFile("Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text");
 	for (auto const& line : src->Events)
-		file.WriteLineToFile(agi::format("%s: Marked=0,%s,%s,%s,%s,%d,%d,%d,%s,%s"
+		file.WriteLineToFile(std::format("{}: Marked=0,{},{},{},{},{},{},{},{},{}"
 			, (line.Comment ? "Comment" : "Dialogue")
 			, line.Start.GetAssFormatted(), line.End.GetAssFormatted()
 			, replace_commas(line.Style), replace_commas(line.Actor)

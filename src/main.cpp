@@ -57,7 +57,6 @@
 #include "version.h"
 
 #include <libaegisub/dispatch.h>
-#include <libaegisub/format_path.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/io.h>
 #include <libaegisub/log.h>
@@ -69,6 +68,7 @@
 #include <wx/msgdlg.h>
 #include <wx/stackwalk.h>
 #include <wx/utils.h>
+#include <format>
 
 namespace config {
 	agi::Options *opt = nullptr;
@@ -102,7 +102,7 @@ wxDEFINE_EVENT(EVT_CALL_THUNK, ValueEvent<agi::dispatch::Thunk>);
 }
 
 /// Message displayed when an exception has occurred.
-static wxString exception_message = "Oops, Aegisub has crashed!\n\nAn attempt has been made to save a copy of your file to:\n\n%s\n\nAegisub will now close.";
+static wxString exception_message = "Oops, Aegisub has crashed!\n\nAn attempt has been made to save a copy of your file to:\n\n{}\n\nAegisub will now close.";
 
 /// @brief Gets called when application starts.
 /// @return bool
@@ -243,7 +243,7 @@ bool AegisubApp::OnInit() {
 		setlocale(LC_CTYPE, "en_US.UTF-8");
 #endif
 
-		exception_message = _("Oops, Aegisub has crashed!\n\nAn attempt has been made to save a copy of your file to:\n\n%s\n\nAegisub will now close.");
+		exception_message = _("Oops, Aegisub has crashed!\n\nAn attempt has been made to save a copy of your file to:\n\n{}\n\nAegisub will now close.");
 
 		// Load plugins
 		Automation4::ScriptFactory::Register(std::make_unique<Automation4::LuaScriptFactory>());
@@ -375,7 +375,7 @@ void AegisubApp::UnhandledException(bool stackWalk) {
 		agi::fs::CreateDirectory(path);
 
 		auto filename = c->subsController->Filename().stem();
-		filename.replace_extension(agi::format("%s.ass", agi::util::strftime("%Y-%m-%d-%H-%M-%S")));
+		filename.replace_extension(std::format("{}.ass", agi::util::strftime("%Y-%m-%d-%H-%M-%S")));
 		path /= filename;
 		c->subsController->Save(path);
 
@@ -387,10 +387,10 @@ void AegisubApp::UnhandledException(bool stackWalk) {
 
 	if (any) {
 		// Inform user of crash.
-		wxMessageBox(agi::wxformat(exception_message, path), _("Program error"), wxOK | wxICON_ERROR | wxCENTER, nullptr);
+		wxMessageBox(agi::format(exception_message, path.string()), _("Program error"), wxOK | wxICON_ERROR | wxCENTER, nullptr);
 	}
 	else if (LastStartupState) {
-		wxMessageBox(fmt_wx("Aegisub has crashed while starting up!\n\nThe last startup step attempted was: %s.", LastStartupState), _("Program error"), wxOK | wxICON_ERROR | wxCENTER);
+		wxMessageBox(fmt_wx("Aegisub has crashed while starting up!\n\nThe last startup step attempted was: {}.", LastStartupState), _("Program error"), wxOK | wxICON_ERROR | wxCENTER);
 	}
 #endif
 }
@@ -404,17 +404,17 @@ void AegisubApp::OnFatalException() {
 }
 
 #define SHOW_EXCEPTION(str) \
-	wxMessageBox(fmt_tl("An unexpected error has occurred. Please save your work and restart Aegisub.\n\nError Message: %s", str), \
+	wxMessageBox(fmt_tl("An unexpected error has occurred. Please save your work and restart Aegisub.\n\nError Message: {}", str), \
 				"Exception in event handler", wxOK | wxICON_ERROR | wxCENTER | wxSTAY_ON_TOP)
 bool AegisubApp::OnExceptionInMainLoop() {
 	try {
 		throw;
 	}
 	catch (const agi::Exception &e) {
-		SHOW_EXCEPTION(to_wx(e.GetMessage()));
+		SHOW_EXCEPTION(to_wx(e.GetMessage()).utf8_str().data());
 	}
 	catch (const std::exception &e) {
-		SHOW_EXCEPTION(to_wx(e.what()));
+		SHOW_EXCEPTION(to_wx(e.what()).utf8_str().data());
 	}
 	catch (...) {
 		SHOW_EXCEPTION("Unknown error");

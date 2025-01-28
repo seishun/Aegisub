@@ -37,7 +37,6 @@
 #include "subtitle_format.h"
 #include "utils.h"
 
-#include <libaegisub/format.h>
 #include <libaegisub/split.h>
 
 #include <algorithm>
@@ -178,7 +177,7 @@ void AssStyle::UpdateData() {
 	replace(name.begin(), name.end(), ',', ';');
 	replace(font.begin(), font.end(), ',', ';');
 
-	data = agi::format("Style: %s,%s,%g,%s,%s,%s,%s,%d,%d,%d,%d,%g,%g,%g,%g,%d,%g,%g,%i,%i,%i,%i,%i",
+	data = std::format("Style: {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
 		name, font, fontsize,
 		primary.GetAssStyleFormatted(),
 		secondary.GetAssStyleFormatted(),

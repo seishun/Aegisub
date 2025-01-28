@@ -22,9 +22,6 @@
 #include "compat.h"
 #include "format.h"
 
-#include <libaegisub/format_flyweight.h>
-#include <libaegisub/format_path.h>
-
 #include <algorithm>
 #include <tuple>
 #include <unicode/uchar.h>
@@ -38,7 +35,7 @@ wxString format_missing(wxString const& str) {
 		if (!u_isUWhiteSpace(c.GetValue()))
 			printable += c;
 		else {
-			unprintable += fmt_wx("\n - U+%04X ", c.GetValue());
+			unprintable += fmt_wx("\n - U+{:04X} ", c.GetValue());
 			UErrorCode ec;
 			char buf[1024];
 			auto len = u_charName(c.GetValue(), U_EXTENDED_CHAR_NAME, buf, sizeof buf, &ec);
@@ -64,7 +61,7 @@ void FontCollector::ProcessDialogueLine(const AssDialogue *line, int index) {
 
 	auto style_it = styles.find(line->Style);
 	if (style_it == end(styles)) {
-		status_callback(fmt_tl("Style '%s' does not exist\n", line->Style), 2);
+		status_callback(fmt_tl("Style '{}' does not exist\n", line->Style.get()), 2);
 		++missing;
 		return;
 	}
@@ -151,13 +148,13 @@ void FontCollector::ProcessChunk(std::pair<StyleInfo, UsageData> const& style) {
 	if (style.second.chars.empty() && !style.second.drawing) return;
 
 	if (style.second.chars.empty() && style.second.drawing) {
-		status_callback(fmt_tl("Font '%s' is used in a drawing, but not in any text.\n", style.first.facename), 3);
+		status_callback(fmt_tl("Font '{}' is used in a drawing, but not in any text.\n", style.first.facename), 3);
 	}
 
 	auto res = lister.GetFontPaths(style.first.facename, style.first.bold, style.first.italic, style.second.chars);
 
 	if (res.paths.empty()) {
-		status_callback(fmt_tl("Could not find font '%s'\n", style.first.facename), 2);
+		status_callback(fmt_tl("Could not find font '{}'\n", style.first.facename), 2);
 		PrintUsage(style.second);
 		++missing;
 	}
@@ -165,21 +162,21 @@ void FontCollector::ProcessChunk(std::pair<StyleInfo, UsageData> const& style) {
 		for (auto& elem : res.paths) {
 			elem.make_preferred();
 			if (std::find(begin(results), end(results), elem) == end(results)) {
-				status_callback(fmt_tl("Found '%s' at '%s'\n", style.first.facename, elem), 0);
+				status_callback(fmt_tl("Found '{}' at '{}'\n", style.first.facename, elem.string()), 0);
 				results.push_back(elem);
 			}
 		}
 
 		if (res.fake_bold)
-			status_callback(fmt_tl("'%s' does not have a bold variant.\n", style.first.facename), 3);
+			status_callback(fmt_tl("'{}' does not have a bold variant.\n", style.first.facename), 3);
 		if (res.fake_italic)
-			status_callback(fmt_tl("'%s' does not have an italic variant.\n", style.first.facename), 3);
+			status_callback(fmt_tl("'{}' does not have an italic variant.\n", style.first.facename), 3);
 
 		if (res.missing.size()) {
 			if (res.missing.size() > 50)
-				status_callback(fmt_tl("'%s' is missing %d glyphs used.\n", style.first.facename, res.missing.size()), 2);
+				status_callback(fmt_tl("'{}' is missing {} glyphs used.\n", style.first.facename, res.missing.size()), 2);
 			else if (res.missing.size() > 0)
-				status_callback(fmt_tl("'%s' is missing the following glyphs used: %s\n", style.first.facename, format_missing(res.missing)), 2);
+				status_callback(fmt_tl("'{}' is missing the following glyphs used: {}\n", style.first.facename, format_missing(res.missing).utf8_str().data()), 2);
 			PrintUsage(style.second);
 			++missing_glyphs;
 		}
@@ -192,13 +189,13 @@ void FontCollector::PrintUsage(UsageData const& data) {
 	if (data.styles.size()) {
 		status_callback(_("Used in styles:\n"), 2);
 		for (auto const& style : data.styles)
-			status_callback(fmt_wx("  - %s\n", style), 2);
+			status_callback(fmt_wx("  - {}\n", style), 2);
 	}
 
 	if (data.lines.size()) {
 		status_callback(_("Used on lines:"), 2);
 		for (int line : data.lines)
-			status_callback(fmt_wx(" %d", line), 2);
+			status_callback(fmt_wx(" {}", line), 2);
 		status_callback("\n", 2);
 	}
 	status_callback("\n", 2);
@@ -233,11 +230,11 @@ std::vector<agi::fs::path> FontCollector::GetFontPaths(const AssFile *file) {
 	if (missing == 0)
 		status_callback(_("All fonts found.\n"), 1);
 	else
-		status_callback(fmt_plural(missing, "One font could not be found\n", "%d fonts could not be found.\n", missing), 2);
+		status_callback(fmt_plural(missing, "One font could not be found\n", "{} fonts could not be found.\n", missing), 2);
 	if (missing_glyphs != 0)
 		status_callback(fmt_plural(missing_glyphs,
 			"One font was found, but was missing glyphs used in the script.\n",
-			"%d fonts were found, but were missing glyphs used in the script.\n",
+			"{} fonts were found, but were missing glyphs used in the script.\n",
 			missing_glyphs), 2);
 
 	return paths;

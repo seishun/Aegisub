@@ -14,49 +14,31 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#include <libaegisub/format.h>
+#include <format>
 
 #include <wx/string.h>
 #include <wx/translation.h>
 
 namespace agi {
-template<>
-struct writer<char, wxString> {
-	static void write(std::basic_ostream<char>& out, int max_len, wxString const& value) {
-		writer<char, const wxStringCharType *>::write(out, max_len, value.wx_str());
-	}
-};
-
-template<>
-struct writer<wchar_t, wxString> {
-	static void write(std::basic_ostream<wchar_t>& out, int max_len, wxString const& value) {
-		writer<wchar_t, const wxStringCharType *>::write(out, max_len, value.wx_str());
-	}
-};
-
 template<typename... Args>
 std::string format(wxString const& fmt, Args&&... args) {
-	boost::interprocess::basic_vectorstream<std::basic_string<char>> out;
-	format(out, (const char *)fmt.utf8_str(), std::forward<Args>(args)...);
-	return out.vector();
+	return std::format(std::runtime_format((const char *)fmt.utf8_str()), std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 wxString wxformat(wxString const& fmt, Args&&... args) {
-	boost::interprocess::basic_vectorstream<std::basic_string<wxStringCharType>> out;
-	format(out, fmt.wx_str(), std::forward<Args>(args)...);
-	return out.vector();
+	std::basic_string<wxStringCharType> out;
+	std::format_to(std::back_inserter(out), std::runtime_format(fmt.wx_str()), std::forward<Args>(args)...);
+	return out;
 }
 
 template<typename... Args>
 wxString wxformat(const wxStringCharType *fmt, Args&&... args) {
-	boost::interprocess::basic_vectorstream<std::basic_string<wxStringCharType>> out;
-	format(out, fmt, std::forward<Args>(args)...);
-	return out.vector();
+	return format(fmt, std::forward<Args>(args)...);
 }
 }
 
-#define fmt_wx(str, ...) agi::wxformat(wxS(str), __VA_ARGS__)
-#define fmt_tl(str, ...) agi::wxformat(wxGetTranslation(wxS(str)), __VA_ARGS__)
+#define fmt_wx(str, ...) std::format(str, __VA_ARGS__)
+#define fmt_tl(str, ...) agi::format(wxGetTranslation(wxS(str)), __VA_ARGS__)
 #define fmt_plural(n, sing, plural, ...) \
-	agi::wxformat(wxGetTranslation(wxS(sing), wxS(plural), (n)), __VA_ARGS__)
+	agi::format(wxGetTranslation(wxS(sing), wxS(plural), (n)), __VA_ARGS__)
