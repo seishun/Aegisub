@@ -29,6 +29,7 @@
 #include <boost/locale/conversion.hpp>
 
 #include <wx/msgdlg.h>
+#include <ranges>
 
 namespace {
 static const size_t bad_pos = -1;
@@ -208,23 +209,27 @@ bool SearchReplaceEngine::FindReplace(bool replace) {
 	auto const& sel = context->selectionController->GetSelectedSet();
 	bool selection_only = sel.size() > 1 && settings.limit_to == SearchReplaceSettings::Limit::SELECTED;
 
-	do {
-		if (selection_only && !sel.count(&*it)) continue;
-		if (settings.ignore_comments && it->Comment) continue;
+	for (auto& diag : std::views::concat(
+		std::ranges::subrange(it, context->ass->Events.end()),
+		std::ranges::subrange(context->ass->Events.begin(), std::next(it)))
+	) {
+		if (selection_only && !sel.count(&diag)) continue;
+		if (settings.ignore_comments && diag.Comment) continue;
 
-		if (MatchState ms = matches(&*it, pos)) {
+		if (MatchState ms = matches(&diag, pos)) {
 			if (selection_only)
 				// We're cycling through the selection, so don't muck with it
-				context->selectionController->SetActiveLine(&*it);
+				context->selectionController->SetActiveLine(&diag);
 			else
-				context->selectionController->SetSelectionAndActive({ &*it }, &*it);
+				context->selectionController->SetSelectionAndActive({ &diag }, &diag);
 
 			if (settings.field == SearchReplaceSettings::Field::TEXT)
 				context->textSelectionController->SetSelection(ms.start, ms.end);
 
 			return true;
 		}
-	} while (pos = 0, &*(it = circular_next(it, context->ass->Events)) != line);
+		pos = 0;
+	}
 
 	// Replaced something and didn't find another match, so select the newly
 	// inserted text
